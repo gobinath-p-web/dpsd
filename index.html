@@ -82,6 +82,13 @@
       margin-top: -8px;
       margin-bottom: 8px;
     }
+
+    #choice {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
@@ -92,15 +99,17 @@
       <button onclick="showForm('login')">Login</button>
     </div>
 
-    <form id="signupForm" class="hidden" onsubmit="return validateRegisterNumber();" method="post" action="user_form.php">
+    <form id="signupForm" class="hidden" onsubmit="return validateSignup();" method="post" action="user_form.php">
       <h2>Sign In</h2>
       <input type="text" name="name" placeholder="Full Name" required />
       <input type="text" name="regno" id="regno" placeholder="Register Number" required />
+      <div class="unique-warning" id="uniqueWarning">Register number must be unique!</div>
       <input type="password" name="password" placeholder="Password" required />
       <input type="text" name="address" placeholder="Address" required />
       <input type="email" name="email" placeholder="Email ID" required />
       <input type="date" name="dob" placeholder="Date of Birth" required />
-      <input type="number" name="phno" placeholder="Phone Number" required />
+      <input type="number" name="phno" id="phno" placeholder="Phone Number" required />
+      <div class="unique-warning" id="phoneWarning">Invalid number</div>
       <div class="form-group">
         <label for="gender">Gender:</label>
         <select name="gender" required>
@@ -124,15 +133,15 @@
           <option value="O-">O-</option>
         </select>
       </div>
-      <div class="unique-warning" id="uniqueWarning">Register number must be unique!</div>
       <input type="submit" name="signup" value="Sign Up" />
     </form>
 
-    <form id="loginForm" class="hidden" method="post" action="login_check.php">
+    <form id="loginForm" class="hidden" method="post" action="user_form.php">
       <h2>Login</h2>
       <input type="text" name="regno" placeholder="Register Number" required />
       <input type="password" name="password" placeholder="Password" required />
       <input type="submit" name="login" value="Login" />
+      <div class="unique-warning" id="loginError">Register number and password do not match!</div>
     </form>
   </div>
 
@@ -150,16 +159,28 @@
 
     const existingRegNos = ['12345', '67890', 'abcde'];
 
-    function validateRegisterNumber() {
+    function validateSignup() {
       const regno = document.getElementById('regno').value.trim();
-      const warning = document.getElementById('uniqueWarning');
+      const phone = document.getElementById('phno').value.trim();
+      const regWarn = document.getElementById('uniqueWarning');
+      const phoneWarn = document.getElementById('phoneWarning');
+      let valid = true;
+
       if (existingRegNos.includes(regno)) {
-        warning.style.display = 'block';
-        return false;
+        regWarn.style.display = 'block';
+        valid = false;
       } else {
-        warning.style.display = 'none';
-        return true;
+        regWarn.style.display = 'none';
       }
+
+      if (!/^\d{10}$/.test(phone)) {
+        phoneWarn.style.display = 'block';
+        valid = false;
+      } else {
+        phoneWarn.style.display = 'none';
+      }
+
+      return valid;
     }
 
     document.getElementById('regno')?.addEventListener('input', function () {
@@ -169,6 +190,25 @@
         warning.style.display = 'block';
       } else {
         warning.style.display = 'none';
+      }
+    });
+
+    document.getElementById('phno')?.addEventListener('input', function () {
+      const phone = this.value.trim();
+      const warning = document.getElementById('phoneWarning');
+      if (!/^\d{10}$/.test(phone)) {
+        warning.style.display = 'block';
+      } else {
+        warning.style.display = 'none';
+      }
+    });
+
+    // Show login error if redirected with ?login_error=1
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('login_error') === '1') {
+        showForm('login');
+        document.getElementById('loginError').style.display = 'block';
       }
     });
   </script>

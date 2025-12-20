@@ -14,60 +14,66 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['username'] ?? '';
+    $name = $_POST['name'] ?? '';
     $password = $_POST['password'] ?? '';
     $regno = $_POST['regno'] ?? '';
     $address = $_POST['address'] ?? '';
     $email = $_POST['email'] ?? '';
     $gender = $_POST['gender'] ?? '';
     $dob = $_POST['dob'] ?? '';
+    $phno = $_POST['phno'] ?? '';
+    $blood_group = $_POST['blood_group'] ?? '';
 
-    // Check if this is a login or sign-up attempt
     $isLogin = isset($_POST['login']);
     $isSignup = isset($_POST['signup']);
 
     if ($isSignup) {
-        // Check for existing register number
-        $stmt = $db->prepare("SELECT COUNT(*) FROM student WHERE register_number = :regno");
-        $stmt->bindParam(':regno', $regno, PDO::PARAM_INT);
+        $stmt = $db->prepare("SELECT COUNT(*) FROM students WHERE regno = :regno");
+        $stmt->bindParam(':regno', $regno);
         $stmt->execute();
         $exists = $stmt->fetchColumn();
 
         if ($exists > 0) {
-            echo "Register number already exists. Please log in instead.";
+            header("Location: index.html?signup_error=1");
             exit;
         }
 
-        if ($name && $regno && $address && $gender && $password && $email && $dob) {
+        if ($name && $regno && $address && $gender && $password && $email && $dob && $phno && $blood_group) {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            $stmt = $db->prepare("INSERT INTO student (register_number, name, email, password, gender, address, dob)
-                                  VALUES (:regno, :name, :email, :password, :gender, :address, :dob)");
-            $stmt->bindParam(':regno', $regno, PDO::PARAM_INT);
+            $stmt = $db->prepare("INSERT INTO students (regno, username, email, password, gender, address, dob, phone_number, blood_group)
+                                  VALUES (:regno, :name, :email, :password, :gender, :address, :dob, :phno, :blood_group)");
+            $stmt->bindParam(':regno', $regno);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashedPassword);
             $stmt->bindParam(':gender', $gender);
             $stmt->bindParam(':address', $address);
             $stmt->bindParam(':dob', $dob);
+            $stmt->bindParam(':phno', $phno);
+            $stmt->bindParam(':blood_group', $blood_group);
             $stmt->execute();
 
-            echo "Sign-up successful!";
+            header("Location: index.html?signup_success=1");
+            exit;
         } else {
-            echo "Please fill all required fields.";
+            header("Location: index.html?signup_error=2");
+            exit;
         }
     }
 
     if ($isLogin) {
-        $stmt = $db->prepare("SELECT password FROM student WHERE register_number = :regno");
-        $stmt->bindParam(':regno', $regno, PDO::PARAM_INT);
+        $stmt = $db->prepare("SELECT password FROM students WHERE regno = :regno");
+        $stmt->bindParam(':regno', $regno);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row && password_verify($password, $row['password'])) {
-            echo "Login successful!";
+            header("Location: dashboard.html"); // or your landing page
+            exit;
         } else {
-            echo "Invalid register number or password.";
+            header("Location: index.html?login_error=1");
+            exit;
         }
     }
 }
