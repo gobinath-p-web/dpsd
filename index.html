@@ -1,168 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>DEPTDOCS</title>
-    <style>
-        .form-group {
-    margin: 20px 0;
-    font-family: 'Segoe UI', sans-serif;
-  }
+  <meta charset="UTF-8" />
+  <title>DEPTDOCS</title>
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-  }
+    .container {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      padding: 40px 30px;
+      width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-  select {
-    width: 100%;
-    max-width: 300px;
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-     background-color: #f9f9f9;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-  }
+    h2 {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-  select:focus {
-    border-color: #007bff;
-    outline: none;
-    background-color: #fff;
-  }
-         body {
-            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
-            background-size: cover;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .login-box {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    padding: 40px 30px;
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
+    button, input[type="submit"] {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #1976d2;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
 
-  .login-box h2 {
-    color: #fff;
-    text-align: center;
-    margin-bottom: 20px;
-    letter-spacing: 1px;
-  }
-        .login-box input[type="text"],
-        .login-box input[type="password"] {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            outline: none;
-            font-size: 16px;
-            background: rgba(255,255,255,0.7);
-            margin-bottom: 10px;
-        }
-         .login-box input[type="submit"] {
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: #1976d2;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+    button:hover, input[type="submit"]:hover {
+      background: #1565c0;
+    }
 
-  .login-box input[type="submit"]:hover {
-    background: #1565c0;
-  }
-        .unique-warning {
-    color: #ff5252;
-    font-size: 13px;
-    display: none;
-    margin-top: -8px;
-    margin-bottom: 8px;
-  }
+    input, select {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255,255,255,0.7);
+      margin-bottom: 10px;
+      width: 100%;
+    }
 
-    </style>
+    .form-group {
+      margin: 10px 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .unique-warning {
+      color: #ff5252;
+      font-size: 13px;
+      display: none;
+      margin-top: -8px;
+      margin-bottom: 8px;
+    }
+  </style>
 </head>
 <body>
-    <form class="login-box" autocomplete="off" onsubmit="return validateRegisterNumber();" action="user_form.php" method="post">
-        <h2>Login</h2>
-        <input type="text" id="username" name="username" placeholder="Username" required>
-        <input type="password" id="password" name="password" placeholder="Password" required>
-        <input type="text" id="regno" name="regno" placeholder="Register Number" required>
-        <input type="text" id="address" name="address" placeholder="ADDRESS" required>
-        <input type="text" id="email" name="email" placeholder="EMAIL ID" required>
-        <input type="date" id="dob" name="dob" placeholder="Date of Birth" required> 
-       <div class="form-group">
-  <label for="gender">Gender:</label>
-  <select id="gender" name="gender">
-    <option value="">-- Select Gender --</option>
-    <option value="Male">Male</option>
-    <option value="Female">Female</option>
-    <option value="Others">Others</option>
-  </select>
-</div>
-<div class="form-group">
-  <label for="bloodgroup">Blood Group:</label>
-  <select id="bloodgroup" name="bloodgroup" required>
-    <option value="">-- Select Blood Group --</option>
-    <option value="A+">A+</option>
-    <option value="A-">A-</option>
-    <option value="B+">B+</option>
-    <option value="B-">B-</option>
-    <option value="AB+">AB+</option>
-    <option value="AB-">AB-</option>
-    <option value="O+">O+</option>
-    <option value="O-">O-</option>
-  </select>
-</div>
-<input type="submit" name="login" value="Login">
-<input type="submit" name="signup" value="Sign Up">
+  <div class="container">
+    <h2>Welcome to DEPTDOCS</h2>
+    <div id="choice">
+      <button onclick="showForm('signup')">Sign In</button>
+      <button onclick="showForm('login')">Login</button>
+    </div>
 
-
-        <div class="unique-warning" id="uniqueWarning">Register number must be unique!</div>
+    <form id="signupForm" class="hidden" onsubmit="return validateRegisterNumber();" method="post" action="user_form.php">
+      <h2>Sign In</h2>
+      <input type="text" name="name" placeholder="Full Name" required />
+      <input type="text" name="regno" id="regno" placeholder="Register Number" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="text" name="address" placeholder="Address" required />
+      <input type="email" name="email" placeholder="Email ID" required />
+      <input type="date" name="dob" placeholder="Date of Birth" required />
+      <input type="number" name="phno" placeholder="Phone Number" required />
+      <div class="form-group">
+        <label for="gender">Gender:</label>
+        <select name="gender" required>
+          <option value="">-- Select Gender --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Others">Others</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="blood_group">Blood Group:</label>
+        <select name="blood_group" required>
+          <option value="">Select Blood Group</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+      </div>
+      <div class="unique-warning" id="uniqueWarning">Register number must be unique!</div>
+      <input type="submit" name="signup" value="Sign Up" />
     </form>
-    <script>
-        // Example: Simulate existing register numbers
-        const existingRegNos = ['12345', '67890', 'abcde'];
 
-        function validateRegisterNumber() {
-            const regno = document.getElementById('regno').value.trim();
-            const warning = document.getElementById('uniqueWarning');
-            if (existingRegNos.includes(regno)) {
-                warning.style.display = 'block';
-                return false;
-            } else {
-                warning.style.display = 'none';
-                return true;
-            }
-        }
+    <form id="loginForm" class="hidden" method="post" action="login_check.php">
+      <h2>Login</h2>
+      <input type="text" name="regno" placeholder="Register Number" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="submit" name="login" value="Login" />
+    </form>
+  </div>
 
-        document.getElementById('regno').addEventListener('input', function() {
-            const regno = this.value.trim();
-            const warning = document.getElementById('uniqueWarning');
-            if (existingRegNos.includes(regno)) {
-                warning.style.display = 'block';
-            } else {
-                warning.style.display = 'none';
-            }
-        });
-         function selectGender(element, value) {
-    document.querySelectorAll('.gender-option').forEach(el => el.classList.remove('selected'));
-    element.classList.add('selected');
-    document.getElementById('gender').value = value;
-  }
-    </script>
+  <script>
+    function showForm(type) {
+      document.getElementById('choice').style.display = 'none';
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+      if (type === 'signup') {
+        document.getElementById('signupForm').classList.remove('hidden');
+      } else {
+        document.getElementById('loginForm').classList.remove('hidden');
+      }
+    }
+
+    const existingRegNos = ['12345', '67890', 'abcde'];
+
+    function validateRegisterNumber() {
+      const regno = document.getElementById('regno').value.trim();
+      const warning = document.getElementById('uniqueWarning');
+      if (existingRegNos.includes(regno)) {
+        warning.style.display = 'block';
+        return false;
+      } else {
+        warning.style.display = 'none';
+        return true;
+      }
+    }
+
+    document.getElementById('regno')?.addEventListener('input', function () {
+      const regno = this.value.trim();
+      const warning = document.getElementById('uniqueWarning');
+      if (existingRegNos.includes(regno)) {
+        warning.style.display = 'block';
+      } else {
+        warning.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
