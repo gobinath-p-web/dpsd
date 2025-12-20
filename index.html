@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DEPTDOCS</title>
+    <style>
+        .form-group {
+    margin: 20px 0;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  select {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+     background-color: #f9f9f9;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+
+  select:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: #fff;
+  }
+         body {
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    padding: 40px 30px;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .login-box h2 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            background: rgba(255,255,255,0.7);
+            margin-bottom: 10px;
+        }
+         .login-box input[type="submit"] {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #1976d2;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .login-box input[type="submit"]:hover {
+    background: #1565c0;
+  }
+        .unique-warning {
+    color: #ff5252;
+    font-size: 13px;
+    display: none;
+    margin-top: -8px;
+    margin-bottom: 8px;
+  }
+
+    </style>
+</head>
+<body>
+    <form class="login-box" autocomplete="off" onsubmit="return validateRegisterNumber();" action="user_form.php" method="post">
+        <h2>Login</h2>
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <input type="text" id="regno" name="regno" placeholder="Register Number" required>
+        <input type="text" id="address" name="address" placeholder="ADDRESS" required>
+        <input type="text" id="email" name="email" placeholder="EMAIL ID" required>
+        <input type="date" id="dob" name="dob" placeholder="Date of Birth" required> 
+       <div class="form-group">
+  <label for="gender">Gender:</label>
+  <select id="gender" name="gender">
+    <option value="">-- Select Gender --</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Others">Others</option>
+  </select>
+</div>
+<div class="form-group">
+  <label for="bloodgroup">Blood Group:</label>
+  <select id="bloodgroup" name="bloodgroup" required>
+    <option value="">-- Select Blood Group --</option>
+    <option value="A+">A+</option>
+    <option value="A-">A-</option>
+    <option value="B+">B+</option>
+    <option value="B-">B-</option>
+    <option value="AB+">AB+</option>
+    <option value="AB-">AB-</option>
+    <option value="O+">O+</option>
+    <option value="O-">O-</option>
+  </select>
+</div>
+<input type="submit" name="login" value="Login">
+<input type="submit" name="signup" value="Sign Up">
+
+
+        <div class="unique-warning" id="uniqueWarning">Register number must be unique!</div>
+    </form>
+    <script>
+        // Example: Simulate existing register numbers
+        const existingRegNos = ['12345', '67890', 'abcde'];
+
+        function validateRegisterNumber() {
+            const regno = document.getElementById('regno').value.trim();
+            const warning = document.getElementById('uniqueWarning');
+            if (existingRegNos.includes(regno)) {
+                warning.style.display = 'block';
+                return false;
+            } else {
+                warning.style.display = 'none';
+                return true;
+            }
+        }
+
+        document.getElementById('regno').addEventListener('input', function() {
+            const regno = this.value.trim();
+            const warning = document.getElementById('uniqueWarning');
+            if (existingRegNos.includes(regno)) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        });
+         function selectGender(element, value) {
+    document.querySelectorAll('.gender-option').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+    document.getElementById('gender').value = value;
+  }
+    </script>
+</body>
+</html>
