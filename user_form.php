@@ -1,6 +1,6 @@
 <?php
 try {
-    $db = new PDO('sqlite:depsdoc.db');
+    $db = new PDO(dsn: 'sqlite:depsdoc.db');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Load schema if needed
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row && password_verify($password, $row['password'])) {
-            header("Location: dashboard.html"); // or your landing page
+            header("Location: dashboard.php"); // or your landing page
             exit;
         } else {
             header("Location: index.html?login_error=1");
