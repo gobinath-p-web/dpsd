@@ -146,71 +146,53 @@
   </div>
 
   <script>
-    function showForm(type) {
-      document.getElementById('choice').style.display = 'none';
-      document.getElementById('signupForm').classList.add('hidden');
-      document.getElementById('loginForm').classList.add('hidden');
-      if (type === 'signup') {
-        document.getElementById('signupForm').classList.remove('hidden');
-      } else {
-        document.getElementById('loginForm').classList.remove('hidden');
-      }
+  function showForm(type) {
+    document.getElementById('choice').style.display = 'none';
+    document.getElementById('signupForm').classList.add('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+    if (type === 'signup') {
+      document.getElementById('signupForm').classList.remove('hidden');
+    } else {
+      document.getElementById('loginForm').classList.remove('hidden');
+    }
+  }
+
+  function validateSignup() {
+    const phone = document.getElementById('phno').value.trim();
+    const phoneWarn = document.getElementById('phoneWarning');
+    let valid = true;
+
+    if (!/^\d{10}$/.test(phone)) {
+      phoneWarn.style.display = 'block';
+      valid = false;
+    } else {
+      phoneWarn.style.display = 'none';
     }
 
-    const existingRegNos = ['12345', '67890', 'abcde'];
+    return valid;
+  }
 
-    function validateSignup() {
-      const regno = document.getElementById('regno').value.trim();
-      const phone = document.getElementById('phno').value.trim();
-      const regWarn = document.getElementById('uniqueWarning');
-      const phoneWarn = document.getElementById('phoneWarning');
-      let valid = true;
-
-      if (existingRegNos.includes(regno)) {
-        regWarn.style.display = 'block';
-        valid = false;
-      } else {
-        regWarn.style.display = 'none';
-      }
-
-      if (!/^\d{10}$/.test(phone)) {
-        phoneWarn.style.display = 'block';
-        valid = false;
-      } else {
-        phoneWarn.style.display = 'none';
-      }
-
-      return valid;
+  document.getElementById('phno')?.addEventListener('input', function () {
+    const phone = this.value.trim();
+    const warning = document.getElementById('phoneWarning');
+    if (!/^\d{10}$/.test(phone)) {
+      warning.style.display = 'block';
+    } else {
+      warning.style.display = 'none';
     }
+  });
 
-    document.getElementById('regno')?.addEventListener('input', function () {
-      const regno = this.value.trim();
-      const warning = document.getElementById('uniqueWarning');
-      if (existingRegNos.includes(regno)) {
-        warning.style.display = 'block';
-      } else {
-        warning.style.display = 'none';
-      }
-    });
-
-    document.getElementById('phno')?.addEventListener('input', function () {
-      const phone = this.value.trim();
-      const warning = document.getElementById('phoneWarning');
-      if (!/^\d{10}$/.test(phone)) {
-        warning.style.display = 'block';
-      } else {
-        warning.style.display = 'none';
-      }
-    });
-
-    // Show login error if redirected with ?login_error=1
-    window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('login_error') === '1') {
-        showForm('login');
-        document.getElementById('loginError').style.display = 'block';
-      }
-    });
-  </script>
+  // Show login or signup error if redirected
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('login_error') === '1') {
+      showForm('login');
+      document.getElementById('loginError').style.display = 'block';
+    } else if (params.get('signup_error') === '1') {
+      showForm('signup');
+      document.getElementById('uniqueWarning').style.display = 'block';
+    }
+  });
+</script>
 </body>
 </html>

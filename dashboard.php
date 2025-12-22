@@ -5,6 +5,16 @@ if (!isset($_SESSION['user'])) {
   exit();
 }
 $user = $_SESSION['user'];
+
+try {
+  $db = new PDO('sqlite:depsdoc.db');
+  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $stmt = $db->prepare("SELECT S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage FROM student WHERE regno = ?");
+  $stmt->execute([$user['regno']]);
+  $percentages = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+  die("Error loading percentages: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +27,6 @@ $user = $_SESSION['user'];
       font-family: Arial, sans-serif;
       background: #f0f4f8;
     }
-
     .header {
       background-color: #1976d2;
       color: white;
@@ -26,13 +35,11 @@ $user = $_SESSION['user'];
       justify-content: space-between;
       align-items: center;
     }
-
     .profile {
       display: flex;
       align-items: center;
       gap: 15px;
     }
-
     .profile img {
       width: 60px;
       height: 60px;
@@ -40,38 +47,31 @@ $user = $_SESSION['user'];
       object-fit: cover;
       border: 2px solid #fff;
     }
-
     .profile-details {
       color: #fff;
       font-size: 14px;
     }
-
     .content {
       padding: 30px;
     }
-
     .semester {
       margin-bottom: 40px;
     }
-
     h3 {
       color: #1976d2;
       margin-bottom: 10px;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       background: white;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
     th, td {
       padding: 12px;
       text-align: center;
       border: 1px solid #ccc;
     }
-
     th {
       background-color: #e3f2fd;
     }
@@ -83,42 +83,47 @@ $user = $_SESSION['user'];
     <div class="profile">
       <img src="https://via.placeholder.com/60" alt="Profile Picture" />
       <div class="profile-details">
-        <div><strong>Name:</strong> John Doe</div>
-        <div><strong>Reg No:</strong> 12345</div>
-        <div><strong>Email:</strong> john@example.com</div>
+        <div><strong>Name:</strong> <?php echo htmlspecialchars($user['name']); ?></div>
+        <div><strong>Reg No:</strong> <?php echo htmlspecialchars($user['regno']); ?></div>
+        <div><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></div>
       </div>
     </div>
   </div>
 
   <div class="content">
-    <!-- Repeat this block for each semester -->
-    <div class="semester">
-      <h3>Semester 1</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Course Title</th>
-            <th>Course Code</th>
-            <th>Internal Mark</th>
-            <th>External Mark</th>
-            <th>Total Mark</th>
-            <th>Percentage</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Mathematics I</td>
-            <td>MATH101</td>
-            <td>45</td>
-            <td>40</td>
-            <td>85</td>
-            <td>85%</td>
-          </tr>
-          <!-- Add more rows as needed -->
-        </tbody>
-      </table>
-    </div>
-    <!-- Repeat for Semester 2 to 6 -->
+    <?php
+    for ($i = 1; $i <= 6; $i++) {
+      $semKey = "S{$i}percentage";
+      $percentage = isset($percentages[$semKey]) ? $percentages[$semKey] : 'N/A';
+      echo "
+      <div class='semester'>
+        <h3>Semester $i</h3>
+        <p><strong>Overall Percentage:</strong> {$percentage}%</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Course Title</th>
+              <th>Course Code</th>
+              <th>Internal Mark</th>
+              <th>External Mark</th>
+              <th>Total Mark</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sample Course</td>
+              <td>CODE$i</td>
+              <td>--</td>
+              <td>--</td>
+              <td>--</td>
+              <td>{$percentage}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>";
+    }
+    ?>
   </div>
 </body>
 </html>
