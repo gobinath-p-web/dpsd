@@ -8,13 +8,16 @@ error_reporting(E_ALL);
 
 // Connect to SQLite database
 try {
-    $db = new PDO('sqlite:deptdocs.db');
+    $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Load schema from tables.sql if it exists
-    $schemaFile = __DIR__ . '/tables.sql';
+   $schemaFile = __DIR__ . '/tables.sql';
+$result = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='student'");
+if (!$result->fetch()) {
     if (file_exists($schemaFile)) {
         $schema = file_get_contents($schemaFile);
+        echo "<pre>$schema</pre>"; // ← Add this line here to debug the schema content
         if ($schema === false) {
             die("Failed to read tables.sql file.");
         }
@@ -22,7 +25,10 @@ try {
             $error = $db->errorInfo();
             die("Schema execution failed: " . $error[2]);
         }
+    } else {
+        die("Schema file not found.");
     }
+}
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
