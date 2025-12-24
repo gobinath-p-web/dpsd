@@ -10,28 +10,9 @@ try {
   $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // Fetch semester percentages
   $stmt = $db->prepare("SELECT S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage FROM student WHERE regno = ?");
   $stmt->execute([$user['regno']]);
   $percentages = $stmt->fetch(PDO::FETCH_ASSOC);
-
-  // Fetch attendance for current month
-  $month = date('m');
-  $year = date('Y');
-  $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
-
-  $stmt = $db->prepare("SELECT date, status FROM attendance WHERE regno = ? AND strftime('%Y-%m', date) = ?");
-  $stmt->execute([$user['regno'], "$year-$month"]);
-  $records = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-
-  function getSymbol($status) {
-    return match ($status) {
-      'P' => '✅',
-      'A' => '❌',
-      'H' => '🅷',
-      default => '-',
-    };
-  }
 } catch (PDOException $e) {
   die("Database error: " . $e->getMessage());
 }
@@ -55,6 +36,21 @@ try {
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+    }
+    .left-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .presence-button {
+      padding: 10px 16px;
+      background: white;
+      color: #1976d2;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
     }
     .profile {
       display: flex;
@@ -101,7 +97,12 @@ try {
 </head>
 <body>
   <div class="header">
-    <h2>DEPTDOCS Dashboard</h2>
+    <div class="left-header">
+      <h2>DEPTDOCS Dashboard</h2>
+      <form action="attendance.php" method="get">
+        <button type="submit" class="presence-button">Your Presence</button>
+      </form>
+    </div>
     <div class="profile">
       <img src="https://via.placeholder.com/60" alt="Profile Picture" />
       <div class="profile-details">
@@ -146,28 +147,6 @@ try {
       </div>";
     }
     ?>
-
-    <h3>Attendance for <?php echo date('F Y'); ?></h3>
-    <table>
-      <tr>
-        <th>Date</th>
-        <th>Day</th>
-        <th>Status</th>
-      </tr>
-      <?php
-      for ($day = 1; $day <= $daysInMonth; $day++) {
-        $lookupDate = sprintf('%04d-%02d-%02d', $year, $month, $day); // for DB
-        $displayDate = sprintf('%02d-%02d-%04d', $day, $month, $year); // for UI
-        $dayName = date('l', strtotime($lookupDate));
-        $status = $records[$lookupDate] ?? '';
-        echo "<tr>
-                <td>$displayDate</td>
-                <td>$dayName</td>
-                <td>" . getSymbol($status) . "</td>
-              </tr>";
-      }
-      ?>
-    </table>
   </div>
 </body>
 </html>

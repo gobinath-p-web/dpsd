@@ -1,152 +1,85 @@
 <?php
 session_start();
-if (!isset($_SESSION['user'])) {
-  header("Location: index.html");
-  exit();
+
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Include database connection and schema setup
+require_once __DIR__ . '/includes/db.php';
+
+// Handle Sign Up
+if (isset($_POST['signup'])) {
+    $regno = $_POST['regno'];
+
+    // Check if regno already exists
+    $stmt = $db->prepare("SELECT regno FROM student WHERE regno = ?");
+    $stmt->execute([$regno]);
+
+    if ($stmt->fetch()) {
+        header("Location: index.html?signup_error=1");
+        exit();
+    }
+
+    // Insert new student
+    $stmt = $db->prepare("INSERT INTO student (
+        regno, name, password, address, arrear,
+        S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage,
+        blood_group, phone_number, email, gender, dob
+    ) VALUES (?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, ?, ?, ?, ?, ?)");
+
+    $stmt->execute([
+        $_POST['regno'],
+        $_POST['name'],
+        password_hash($_POST['password'], PASSWORD_DEFAULT),
+        $_POST['address'],
+        $_POST['blood_group'],
+        $_POST['phno'],
+        $_POST['email'],
+        $_POST['gender'],
+        $_POST['dob']
+    ]);
+
+    // Store user session
+    $_SESSION['user'] = [
+        'regno' => $_POST['regno'],
+        'name' => $_POST['name'],
+        'email' => $_POST['email'],
+        'phno' => $_POST['phno'],
+        'dob' => $_POST['dob'],
+        'gender' => $_POST['gender'],
+        'blood_group' => $_POST['blood_group']
+    ];
+
+    header("Location: dashboard.php");
+    exit();
 }
-$user = $_SESSION['user'];
 
-try {
-  $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
-  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Handle Login
+if (isset($_POST['login'])) {
+    $regno = $_POST['regno'];
+    $password = $_POST['password'];
 
-  $stmt = $db->prepare("SELECT S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage FROM student WHERE regno = ?");
-  $stmt->execute([$user['regno']]);
-  $percentages = $stmt->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-  die("Database error: " . $e->getMessage());
+    $stmt = $db->prepare("SELECT * FROM student WHERE regno = ?");
+    $stmt->execute([$regno]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user'] = [
+            'regno' => $user['regno'],
+            'name' => $user['name'],
+            'email' => $user['email'],
+            'phno' => $user['phone_number'],
+            'dob' => $user['dob'],
+            'gender' => $user['gender'],
+            'blood_group' => $user['blood_group']
+        ];
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        header("Location: index.html?login_error=1");
+        exit();
+    }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Dashboard - DEPTDOCS</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f0f4f8;
-    }
-    .header {
-      background-color: #1976d2;
-      color: white;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .left-header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .presence-button {
-      padding: 10px 16px;
-      background: white;
-      color: #1976d2;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .profile {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    .profile img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #fff;
-    }
-    .profile-details {
-      color: #fff;
-      font-size: 14px;
-    }
-    .content {
-      padding: 30px;
-    }
-    .semester {
-      margin-bottom: 40px;
-    }
-    h3 {
-      color: #1976d2;
-      margin-bottom: 10px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 40px;
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border: 1px solid #ccc;
-    }
-    th {
-      background-color: #e3f2fd;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="left-header">
-      <h2>DEPTDOCS Dashboard</h2>
-      <form action="attendance.php" method="get">
-        <button type="submit" class="presence-button">Your Presence</button>
-      </form>
-    </div>
-    <div class="profile">
-      <img src="https://via.placeholder.com/60" alt="Profile Picture" />
-      <div class="profile-details">
-        <div><strong>Name:</strong> <?php echo htmlspecialchars($user['name']); ?></div>
-        <div><strong>Reg No:</strong> <?php echo htmlspecialchars($user['regno']); ?></div>
-        <div><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="content">
-    <?php
-    for ($i = 1; $i <= 6; $i++) {
-      $semKey = "S{$i}percentage";
-      $percentage = isset($percentages[$semKey]) ? $percentages[$semKey] : 'N/A';
-      echo "
-      <div class='semester'>
-        <h3>Semester $i</h3>
-        <p><strong>Overall Percentage:</strong> {$percentage}%</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Course Title</th>
-              <th>Course Code</th>
-              <th>Internal Mark</th>
-              <th>External Mark</th>
-              <th>Total Mark</th>
-              <th>Percentage</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Sample Course</td>
-              <td>CODE$i</td>
-              <td>--</td>
-              <td>--</td>
-              <td>--</td>
-              <td>{$percentage}%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>";
-    }
-    ?>
-  </div>
-</body>
-</html>
