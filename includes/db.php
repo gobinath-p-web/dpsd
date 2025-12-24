@@ -1,19 +1,40 @@
 <?php
 try {
+    // Connect to SQLite database (adjust path if needed)
     $db = new PDO('sqlite:' . __DIR__ . '/../deptdocs.db');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Optional: create schema if student table doesn't exist
-    $result = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='student'");
-    if (!$result->fetch()) {
-        $schemaFile = __DIR__ . '/../tables.sql';
-        if (file_exists($schemaFile)) {
-            $schema = file_get_contents($schemaFile);
-            if ($schema !== false) {
-                $db->exec($schema);
-            }
+    // Define required tables
+    $requiredTables = ['student', 'attendance'];
+    $schemaFile = __DIR__ . '/../tables.sql';
+
+    // Check which tables are missing
+    $missingTables = [];
+    foreach ($requiredTables as $table) {
+        $stmt = $db->prepare("SELECT name FROM sqlite_master WHERE type='table' AND name = ?");
+        $stmt->execute([$table]);
+        if (!$stmt->fetch()) {
+            $missingTables[] = $table;
         }
     }
+
+    // Load schema if any required table is missing
+    if (!empty($missingTables)) {
+        if (!file_exists($schemaFile)) {
+            die("Schema file not found.");
+        }
+
+        $schema = file_get_contents($schemaFile);
+        if ($schema === false) {
+            die("Failed to read tables.sql file.");
+        }
+
+        if ($db->exec($schema) === false) {
+            $error = $db->errorInfo();
+            die("Schema execution failed: " . $error[2]);
+        }
+    }
+
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }

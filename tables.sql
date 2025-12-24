@@ -16,3 +16,10 @@ CREATE TABLE IF NOT EXISTS student (
     gender TEXT,
     dob TEXT
 );
+
+CREATE TABLE IF NOT EXISTS attendance (
+  regno TEXT NOT NULL,
+  date TEXT NOT NULL,
+  status TEXT CHECK(status IN ('P', 'A', 'H')) NOT NULL,
+  FOREIGN KEY (regno) REFERENCES student(regno)
+);
