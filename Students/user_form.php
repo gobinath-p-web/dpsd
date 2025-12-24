@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Include database connection and schema setup
+// Include database connection
 require_once __DIR__ . '/includes/db.php';
 
 // Handle Sign Up
@@ -18,7 +18,7 @@ if (isset($_POST['signup'])) {
     $stmt->execute([$regno]);
 
     if ($stmt->fetch()) {
-        header("Location: index.html?signup_error=1");
+        header("Location: students/index.html?signup_error=1");
         exit();
     }
 
@@ -52,7 +52,7 @@ if (isset($_POST['signup'])) {
         'blood_group' => $_POST['blood_group']
     ];
 
-    header("Location: dashboard.php");
+    header("Location: students/dashboard.php");
     exit();
 }
 
@@ -75,11 +75,14 @@ if (isset($_POST['login'])) {
             'gender' => $user['gender'],
             'blood_group' => $user['blood_group']
         ];
-        header("Location: dashboard.php");
+        header("Location: students/dashboard.php");
         exit();
     } else {
-        header("Location: index.html?login_error=1");
+        header("Location: students/index.html?login_error=1");
         exit();
     }
 }
-?>
+
+// If neither login nor signup triggered
+header("Location: students/index.html");
+exit();
