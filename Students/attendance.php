@@ -1,13 +1,13 @@
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
-  header("Location: index.html");
+  header("Location: index.html"); // Adjust if index.html is in a different folder
   exit();
 }
 $user = $_SESSION['user'];
 
 try {
-  $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
+  $db = new PDO('sqlite:' . __DIR__ . '/../deptdocs.db'); // Adjusted path if DB is in project root
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // Get current month and year

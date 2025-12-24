@@ -1,19 +1,14 @@
 <?php
 session_start();
-
-// Enable error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Include database connection
 require_once __DIR__ . '/includes/db.php';
 
-// Handle Sign Up
 if (isset($_POST['signup'])) {
     $regno = $_POST['regno'];
 
-    // Check if regno already exists
     $stmt = $db->prepare("SELECT regno FROM student WHERE regno = ?");
     $stmt->execute([$regno]);
 
@@ -22,7 +17,6 @@ if (isset($_POST['signup'])) {
         exit();
     }
 
-    // Insert new student
     $stmt = $db->prepare("INSERT INTO student (
         regno, name, password, address, arrear,
         S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage,
@@ -41,7 +35,6 @@ if (isset($_POST['signup'])) {
         $_POST['dob']
     ]);
 
-    // Store user session
     $_SESSION['user'] = [
         'regno' => $_POST['regno'],
         'name' => $_POST['name'],
@@ -56,7 +49,6 @@ if (isset($_POST['signup'])) {
     exit();
 }
 
-// Handle Login
 if (isset($_POST['login'])) {
     $regno = $_POST['regno'];
     $password = $_POST['password'];
@@ -83,6 +75,5 @@ if (isset($_POST['login'])) {
     }
 }
 
-// If neither login nor signup triggered
 header("Location: students/index.html");
 exit();

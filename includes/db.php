@@ -21,15 +21,16 @@ try {
     // Load schema if any required table is missing
     if (!empty($missingTables)) {
         if (!file_exists($schemaFile)) {
-            die("Schema file not found.");
+            die("Schema file not found at: $schemaFile");
         }
 
         $schema = file_get_contents($schemaFile);
         if ($schema === false) {
-            die("Failed to read tables.sql file.");
+            die("Failed to read schema file.");
         }
 
-        if ($db->exec($schema) === false) {
+        $result = $db->exec($schema);
+        if ($result === false) {
             $error = $db->errorInfo();
             die("Schema execution failed: " . $error[2]);
         }
