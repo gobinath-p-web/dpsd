@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DEPTDOCS</title>
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      padding: 40px 30px;
+      width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    h2 {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    button, input[type="submit"] {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #1976d2;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover, input[type="submit"]:hover {
+      background: #1565c0;
+    }
+
+    input, select {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255,255,255,0.7);
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    .form-group {
+      margin: 10px 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .unique-warning {
+      color: #ff5252;
+      font-size: 13px;
+      display: none;
+      margin-top: -8px;
+      margin-bottom: 8px;
+    }
+
+    #choice {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+  <form method="post" action="staff_form.php">
+  <input type="text" name="staff_id" placeholder="Staff ID" required />
+  <input type="password" name="password" placeholder="Password" required />
+  <input type="submit" name="login" value="Login" />
+</form>
+</head>
+</html>

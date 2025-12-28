@@ -7,14 +7,14 @@ if (!isset($_SESSION['user'])) {
 $user = $_SESSION['user'];
 
 try {
-  $db = new PDO('sqlite:' . __DIR__ . '/../deptdocs.db');
+  $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $stmt = $db->prepare("SELECT S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage FROM student WHERE regno = ?");
   $stmt->execute([$user['regno']]);
   $percentages = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-  die("Database error: " . $e->getMessage());
+  die("Database error: " . htmlspecialchars($e->getMessage()));
 }
 ?>
 <!DOCTYPE html>
@@ -42,7 +42,7 @@ try {
       align-items: center;
       gap: 20px;
     }
-    .presence-button {
+    .presence-button, .logout-button {
       padding: 10px 16px;
       background: white;
       color: #1976d2;
@@ -51,6 +51,7 @@ try {
       font-weight: bold;
       cursor: pointer;
       font-size: 14px;
+      margin-left: 10px;
     }
     .profile {
       display: flex;
@@ -102,6 +103,9 @@ try {
       <form action="attendance.php" method="get">
         <button type="submit" class="presence-button">Your Presence</button>
       </form>
+      <form action="logout.php" method="post">
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
     </div>
     <div class="profile">
       <img src="https://via.placeholder.com/60" alt="Profile Picture" />
@@ -117,7 +121,7 @@ try {
     <?php
     for ($i = 1; $i <= 6; $i++) {
       $semKey = "S{$i}percentage";
-      $percentage = isset($percentages[$semKey]) ? $percentages[$semKey] : 'N/A';
+      $percentage = isset($percentages[$semKey]) ? htmlspecialchars($percentages[$semKey]) : 'N/A';
       echo "
       <div class='semester'>
         <h3>Semester $i</h3>

@@ -4,19 +4,23 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/includes/db.php';
+// Adjusted path: db.php is in includes/ inside students/
+require_once __DIR__ . '/../includes/db.php';
 
+// Handle Sign Up
 if (isset($_POST['signup'])) {
-    $regno = $_POST['regno'];
+    $regno = trim($_POST['regno']);
 
+    // Check if regno already exists
     $stmt = $db->prepare("SELECT regno FROM student WHERE regno = ?");
     $stmt->execute([$regno]);
 
     if ($stmt->fetch()) {
-        header("Location: students/index.html?signup_error=1");
+        header("Location: index.html?signup_error=1");
         exit();
     }
 
+    // Insert new student
     $stmt = $db->prepare("INSERT INTO student (
         regno, name, password, address, arrear,
         S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage,
@@ -24,7 +28,7 @@ if (isset($_POST['signup'])) {
     ) VALUES (?, ?, ?, ?, 0, 0, 0, 0, 0, 0, 0, ?, ?, ?, ?, ?)");
 
     $stmt->execute([
-        $_POST['regno'],
+        $regno,
         $_POST['name'],
         password_hash($_POST['password'], PASSWORD_DEFAULT),
         $_POST['address'],
@@ -35,8 +39,9 @@ if (isset($_POST['signup'])) {
         $_POST['dob']
     ]);
 
+    // Store user session
     $_SESSION['user'] = [
-        'regno' => $_POST['regno'],
+        'regno' => $regno,
         'name' => $_POST['name'],
         'email' => $_POST['email'],
         'phno' => $_POST['phno'],
@@ -45,12 +50,13 @@ if (isset($_POST['signup'])) {
         'blood_group' => $_POST['blood_group']
     ];
 
-    header("Location: students/dashboard.php");
+    header("Location: dashboard.php");
     exit();
 }
 
+// Handle Login
 if (isset($_POST['login'])) {
-    $regno = $_POST['regno'];
+    $regno = trim($_POST['regno']);
     $password = $_POST['password'];
 
     $stmt = $db->prepare("SELECT * FROM student WHERE regno = ?");
@@ -67,13 +73,13 @@ if (isset($_POST['login'])) {
             'gender' => $user['gender'],
             'blood_group' => $user['blood_group']
         ];
-        header("Location: students/dashboard.php");
+        header("Location: dashboard.php");
         exit();
     } else {
-        header("Location: students/index.html?login_error=1");
+        header("Location: index.html?login_error=1");
         exit();
     }
 }
-
-header("Location: students/index.html");
+// Fallback redirect if no form was submitted
+header("Location: index.html");
 exit();

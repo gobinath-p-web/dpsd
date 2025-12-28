@@ -23,3 +23,16 @@ CREATE TABLE IF NOT EXISTS attendance (
   status TEXT CHECK(status IN ('P', 'A', 'H')) NOT NULL,
   FOREIGN KEY (regno) REFERENCES student(regno)
 );
+
+CREATE TABLE IF NOT EXISTS hod (
+  hod_id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  password TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS staff (
+  staff_id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  password TEXT NOT NULL
+);

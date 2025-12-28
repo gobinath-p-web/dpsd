@@ -1,22 +1,20 @@
 <?php
 session_start();
 if (!isset($_SESSION['user'])) {
-  header("Location: index.html"); // Adjust if index.html is in a different folder
+  header("Location: index.html");
   exit();
 }
 $user = $_SESSION['user'];
 
 try {
-  $db = new PDO('sqlite:' . __DIR__ . '/../deptdocs.db'); // Adjusted path if DB is in project root
+  $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  // Get current month and year
   $month = date('m');
   $year = date('Y');
   $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
-  $firstDayOfMonth = date('w', strtotime("$year-$month-01")); // 0 (Sun) to 6 (Sat)
+  $firstDayOfMonth = date('w', strtotime("$year-$month-01"));
 
-  // Fetch attendance records for this student and month
   $stmt = $db->prepare("SELECT date, status FROM attendance WHERE regno = ? AND strftime('%Y-%m', date) = ?");
   $stmt->execute([$user['regno'], "$year-$month"]);
   $records = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -30,7 +28,7 @@ try {
     };
   }
 } catch (PDOException $e) {
-  die("Database error: " . $e->getMessage());
+  die("Database error: " . htmlspecialchars($e->getMessage()));
 }
 ?>
 <!DOCTYPE html>
@@ -86,24 +84,22 @@ try {
   </style>
 </head>
 <body>
-  <h2>Your Presence for <?php echo date('F Y'); ?></h2>
+  <h2>Your Presence for <?php echo htmlspecialchars(date('F Y')); ?></h2>
   <div class="calendar">
     <?php
     $dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     foreach ($dayNames as $day) {
-      echo "<div class='day-name'>$day</div>";
+      echo "<div class='day-name'>" . htmlspecialchars($day) . "</div>";
     }
 
-    // Empty cells before the first day
     for ($i = 0; $i < $firstDayOfMonth; $i++) {
       echo "<div class='day-cell empty'></div>";
     }
 
-    // Calendar days
     for ($day = 1; $day <= $daysInMonth; $day++) {
       $lookupDate = sprintf('%04d-%02d-%02d', $year, $month, $day);
       $symbol = getSymbol($records[$lookupDate] ?? '');
-      echo "<div class='day-cell'><strong>$day</strong><br>$symbol</div>";
+      echo "<div class='day-cell'><strong>" . htmlspecialchars($day) . "</strong><br>" . htmlspecialchars($symbol) . "</div>";
     }
     ?>
   </div>

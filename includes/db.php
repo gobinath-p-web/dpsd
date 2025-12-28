@@ -1,12 +1,15 @@
 <?php
 try {
-    // Connect to SQLite database (adjust path if needed)
-    $db = new PDO('sqlite:' . __DIR__ . '/../deptdocs.db');
+    // Absolute path to the database file
+    $dbPath = 'D:/docs/repos/depsdoc/dpsd/students/deptdocs.db';
+
+    // Connect to SQLite database
+    $db = new PDO('sqlite:' . $dbPath);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Define required tables
-    $requiredTables = ['student', 'attendance'];
-    $schemaFile = __DIR__ . '/../tables.sql';
+    $requiredTables = ['student', 'attendance','hod','staff'];
+    $schemaFile = __DIR__ . '/tables.sql';
 
     // Check which tables are missing
     $missingTables = [];
@@ -21,7 +24,7 @@ try {
     // Load schema if any required table is missing
     if (!empty($missingTables)) {
         if (!file_exists($schemaFile)) {
-            die("Schema file not found at: $schemaFile");
+            die("Schema file not found at: " . htmlspecialchars($schemaFile));
         }
 
         $schema = file_get_contents($schemaFile);
@@ -32,11 +35,11 @@ try {
         $result = $db->exec($schema);
         if ($result === false) {
             $error = $db->errorInfo();
-            die("Schema execution failed: " . $error[2]);
+            die("Schema execution failed: " . htmlspecialchars($error[2]));
         }
     }
 
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    die("Database connection failed: " . htmlspecialchars($e->getMessage()));
 }
 ?>
