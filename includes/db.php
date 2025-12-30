@@ -1,7 +1,7 @@
 <?php
 try {
     // Absolute path to the database file
-    $dbPath = 'D:/docs/repos/depsdoc/dpsd/students/deptdocs.db';
+    $dbPath = 'D:/docs/repos/depsdoc/dpsd/deptdocs.db';
 
     // Connect to SQLite database
     $db = new PDO('sqlite:' . $dbPath);

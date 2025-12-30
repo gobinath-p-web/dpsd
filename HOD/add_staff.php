@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   echo "Staff added successfully.";
 }
 ?>
+
 <form method="post">
   <input type="text" name="staff_id" placeholder="Staff ID" required />
   <input type="text" name="name" placeholder="Name" required />

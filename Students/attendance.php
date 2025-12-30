@@ -7,7 +7,7 @@ if (!isset($_SESSION['user'])) {
 $user = $_SESSION['user'];
 
 try {
-  $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
+  $db = new PDO('sqlite:D:/docs/repos/depsdoc/dpsd/deptdocs.db');
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $month = date('m');

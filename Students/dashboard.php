@@ -7,7 +7,7 @@ if (!isset($_SESSION['user'])) {
 $user = $_SESSION['user'];
 
 try {
-  $db = new PDO('sqlite:' . __DIR__ . '/deptdocs.db');
+  $db = new PDO('sqlite:D:/docs/repos/depsdoc/dpsd/deptdocs.db');
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $stmt = $db->prepare("SELECT S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage FROM student WHERE regno = ?");
