@@ -14,7 +14,7 @@ if (!isset($_GET['regno'])) {
 $regno = $_GET['regno'];
 
 // Fetch student data
-$stmt = $db->prepare("SELECT arrear, S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage FROM student WHERE regno = ?");
+$stmt = $db->prepare("SELECT section,arrear, S1percentage, S2percentage, S3percentage, S4percentage, S5percentage, S6percentage FROM student WHERE regno = ?");
 $stmt->execute([$regno]);
 $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -24,6 +24,7 @@ if (!$student) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $section = $_POST['section'] ?? '';
     $arrear = $_POST['arrear'] ?? 0;
     $s1 = $_POST['S1percentage'] ?? 0;
     $s2 = $_POST['S2percentage'] ?? 0;
@@ -32,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $s5 = $_POST['S5percentage'] ?? 0;
     $s6 = $_POST['S6percentage'] ?? 0;
 
-    $update = $db->prepare("UPDATE student SET arrear = ?, S1percentage = ?, S2percentage = ?, S3percentage = ?, S4percentage = ?, S5percentage = ?, S6percentage = ? WHERE regno = ?");
-    $update->execute([$arrear, $s1, $s2, $s3, $s4, $s5, $s6, $regno]);
+    $update = $db->prepare("UPDATE student SET section = ?, arrear = ?, S1percentage = ?, S2percentage = ?, S3percentage = ?, S4percentage = ?, S5percentage = ?, S6percentage = ? WHERE regno = ?");
+    $update->execute([$section, $arrear, $s1, $s2, $s3, $s4, $s5, $s6, $regno]);
 
     header("Location: staff_dashboard.php");
     exit();
@@ -85,8 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-    <h2>Edit Semester Percentages & Arrears</h2>
+    <h2>Edit Students</h2>
     <form method="post">
+        <label>Section</label>
+<select name="section" required>
+    <?php foreach (['A', 'B', 'C'] as $sec): ?>
+        <option value="<?= $sec ?>" <?= $student['section'] === $sec ? 'selected' : '' ?>><?= $sec ?></option>
+    <?php endforeach; ?>
+</select>
         <label>Arrear</label>
         <input type="number" name="arrear" value="<?= htmlspecialchars($student['arrear']) ?>" required>
 

@@ -1,7 +1,7 @@
+
 CREATE TABLE IF NOT EXISTS student (
     regno TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    password TEXT NOT NULL,
     address TEXT,
     arrear INTEGER,
     S1percentage REAL,
@@ -35,4 +35,11 @@ CREATE TABLE IF NOT EXISTS staff (
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   password TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS attendance_summary (
+    section VARCHAR(10),
+    date DATE,
+    presents INT,
+    PRIMARY KEY (section, date)
 );

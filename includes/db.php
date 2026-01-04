@@ -8,7 +8,7 @@ try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Define required tables
-    $requiredTables = ['student', 'attendance','hod','staff'];
+    $requiredTables = ['attendance_summary','student', 'attendance','hod','staff'];
     $schemaFile = __DIR__ . '/tables.sql';
 
     // Check which tables are missing
